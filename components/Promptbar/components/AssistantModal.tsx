@@ -22,6 +22,8 @@ import { filterSupportedIntegrationOps } from '@/utils/app/ops';
 import  {AssistantPathEditor, AstPathData, emptyAstPathData, isAstPathDataChanged} from './AssistantModalComponents/AssistantPathEditor';
 import {opLanguageOptionsMap } from '@/types/op';
 import { getAgentTools } from '@/services/agentService';
+import BedrockKnowledgeBaseSection from './AssistantModalComponents/BedrockKnowledgeBaseSection';
+import { BedrockKnowledgeBaseConfig } from '@/types/assistant';
 import { AssistantWorkflowSelector } from '@/components/AssistantWorkflows/AssistantWorkflowSelector';
 import { AstWorkflow} from '@/types/assistantWorkflows';
 import { registerAstWorkflowTemplate } from '@/services/assistantWorkflowService';;
@@ -288,6 +290,13 @@ export const AssistantModal: FC<Props> = ({assistant, onCancel, onSave, onUpdate
 
     const [integrationDataSources, setIntegrationDataSources] = useState<DriveFilesDataSources | undefined>(definition.data?.integrationDriveData);
     const [driveRescanSchedule, setDriveRescanSchedule] = useState<DriveRescanSchedule | null>(null);
+
+    const [bedrockKBConfig, setBedrockKBConfig] = useState<BedrockKnowledgeBaseConfig>({
+        useBedrockKnowledgeBase: definition.data?.useBedrockKnowledgeBase || false,
+        bedrockKnowledgeBaseId: definition.data?.bedrockKnowledgeBaseId || '',
+        bedrockKnowledgeBaseRegion: definition.data?.bedrockKnowledgeBaseRegion || '',
+        bedrockKnowledgeBaseMaxResults: definition.data?.bedrockKnowledgeBaseMaxResults || 10,
+    });
 
     const [apiOptions, setAPIOptions] = useState<{ [key: string]: boolean }>(initialAPIOptionState);
     const [availableApis, setAvailableApis] = useState<any[] | null>(null);
@@ -559,6 +568,25 @@ export const AssistantModal: FC<Props> = ({assistant, onCancel, onSave, onUpdate
             return;
         }
 
+        // Validate Bedrock Knowledge Base configuration
+        if (bedrockKBConfig.useBedrockKnowledgeBase) {
+            if (!bedrockKBConfig.bedrockKnowledgeBaseId || bedrockKBConfig.bedrockKnowledgeBaseId.trim() === '') {
+                alert("Knowledge Base ID is required when Bedrock Knowledge Base is enabled.");
+                return;
+            }
+            // Basic format validation for KB ID (10 uppercase alphanumeric characters)
+            if (!/^[A-Z0-9]{10}$/.test(bedrockKBConfig.bedrockKnowledgeBaseId)) {
+                alert("Knowledge Base ID should be 10 uppercase alphanumeric characters.");
+                return;
+            }
+            // Validate max results range
+            if (bedrockKBConfig.bedrockKnowledgeBaseMaxResults && 
+                (bedrockKBConfig.bedrockKnowledgeBaseMaxResults < 1 || bedrockKBConfig.bedrockKnowledgeBaseMaxResults > 50)) {
+                alert("Max results must be between 1 and 50.");
+                return;
+            }
+        }
+
         // Check if any data sources are still uploading
         const isUploading = Object.values(documentState).some((x) => x < 100);
         const isUploadingGroupDS = additionalGroupData && additionalGroupData.groupTypeData ? Object.entries(additionalGroupData.groupTypeData as AstGroupTypeData).some(([type, info]) => !allDocumentsUploaded(info.documentState)) : false;
@@ -734,6 +762,24 @@ export const AssistantModal: FC<Props> = ({assistant, onCancel, onSave, onUpdate
                     cleanupRemovedDatasources(initDriveDataSources, integrationDataSources ?? {});
                 }
                 newAssistant.data.integrationDriveData = integrationDataSources;
+            }
+
+            // Add Bedrock Knowledge Base configuration
+            if (bedrockKBConfig.useBedrockKnowledgeBase) {
+                newAssistant.data.useBedrockKnowledgeBase = bedrockKBConfig.useBedrockKnowledgeBase;
+                newAssistant.data.bedrockKnowledgeBaseId = bedrockKBConfig.bedrockKnowledgeBaseId;
+                if (bedrockKBConfig.bedrockKnowledgeBaseRegion) {
+                    newAssistant.data.bedrockKnowledgeBaseRegion = bedrockKBConfig.bedrockKnowledgeBaseRegion;
+                }
+                if (bedrockKBConfig.bedrockKnowledgeBaseMaxResults) {
+                    newAssistant.data.bedrockKnowledgeBaseMaxResults = bedrockKBConfig.bedrockKnowledgeBaseMaxResults;
+                }
+            } else {
+                // Remove KB config if disabled
+                delete newAssistant.data.useBedrockKnowledgeBase;
+                delete newAssistant.data.bedrockKnowledgeBaseId;
+                delete newAssistant.data.bedrockKnowledgeBaseRegion;
+                delete newAssistant.data.bedrockKnowledgeBaseMaxResults;
             }
            
 
@@ -1491,7 +1537,14 @@ export const AssistantModal: FC<Props> = ({assistant, onCancel, onSave, onUpdate
                               </div>
                             }
 
-                    
+                            {/* Bedrock Knowledge Base Section */}
+                            {!disableEdit && (
+                                <BedrockKnowledgeBaseSection
+                                    config={bedrockKBConfig}
+                                    onChange={setBedrockKBConfig}
+                                    disabled={disableEdit}
+                                />
+                            )}
 
                             {/* Workflow Template Selector - purposefully not featured flagged / outside ofthe advanced section */}
                             {baseWorkflowTemplateId && 

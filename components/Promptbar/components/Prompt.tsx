@@ -240,6 +240,14 @@ export const PromptComponent = ({ prompt }: Props) => {
                             className="overflow-hidden flex-1 text-ellipsis whitespace-nowrap break-all text-left text-[12.5px] leading-4">
                             {prompt.name}
                         </div>
+                        {isAssistant(prompt) && prompt.data?.assistant?.definition?.data?.useBedrockKnowledgeBase && (
+                            <span 
+                                className="ml-2 px-1.5 py-0.5 text-[10px] rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700"
+                                title="Uses AWS Bedrock Knowledge Base"
+                            >
+                                🗄️ KB
+                            </span>
+                        )}
                     </div>
 
                 </button>

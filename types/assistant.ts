@@ -11,6 +11,17 @@ export interface AssistantTool {
     [key:string]:string;
 }
 
+export interface BedrockKnowledgeBaseConfig {
+    useBedrockKnowledgeBase: boolean;
+    bedrockKnowledgeBaseId?: string;
+    bedrockKnowledgeBaseRegion?: string;
+    bedrockKnowledgeBaseMaxResults?: number;
+}
+
+export interface AssistantData extends BedrockKnowledgeBaseConfig {
+    [key:string]:any;
+}
+
 export interface Assistant {
     id:string,
     definition: AssistantDefinition;
@@ -32,7 +43,7 @@ export interface AssistantDefinition {
     options?:{[key:string]:any};
     version?:number;
     id?:string;
-    data?:{[key:string]:any};
+    data?:AssistantData;
     assistantId?:string;
     groupId?:string;
 }
