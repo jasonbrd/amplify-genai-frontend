@@ -29,7 +29,7 @@ const BedrockKnowledgeBaseSection: React.FC<Props> = ({ config, onChange, disabl
             <label className="flex items-center gap-3 cursor-pointer mb-3">
                 <input
                     type="checkbox"
-                    checked={config.useBedrockKnowledgeBase}
+                    checked={config.useBedrockKnowledgeBase ?? false}
                     onChange={(e) => onChange({
                         ...config,
                         useBedrockKnowledgeBase: e.target.checked
@@ -43,7 +43,7 @@ const BedrockKnowledgeBaseSection: React.FC<Props> = ({ config, onChange, disabl
             </label>
 
             {/* KB Configuration (shown when enabled) */}
-            {config.useBedrockKnowledgeBase && (
+            {config.useBedrockKnowledgeBase === true && (
                 <div className="mt-3 p-3 bg-white dark:bg-[#40414F] rounded border-l-4 border-green-500">
                     {/* KB ID - Required */}
                     <div className="mb-3">
@@ -137,7 +137,7 @@ const BedrockKnowledgeBaseSection: React.FC<Props> = ({ config, onChange, disabl
             )}
 
             {/* Info Box for Hybrid Mode */}
-            {config.useBedrockKnowledgeBase && (
+            {config.useBedrockKnowledgeBase === true && (
                 <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded text-xs text-blue-900 dark:text-blue-200">
                     <strong>ℹ️ Hybrid Mode:</strong> You can use both Bedrock Knowledge Base and uploaded documents together. 
                     The assistant will use information from both sources.

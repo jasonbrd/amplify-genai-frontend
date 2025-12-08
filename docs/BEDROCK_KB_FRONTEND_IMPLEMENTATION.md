@@ -6,13 +6,14 @@ This document summarizes the frontend implementation of AWS Bedrock Knowledge Ba
 ## Changes Made
 
 ### 1. Type Definitions (`types/assistant.ts`)
-- Added `BedrockKnowledgeBaseConfig` interface with fields:
-  - `useBedrockKnowledgeBase: boolean`
+- Added `BedrockKnowledgeBaseConfig` interface with **optional** fields:
+  - `useBedrockKnowledgeBase?: boolean`
   - `bedrockKnowledgeBaseId?: string`
   - `bedrockKnowledgeBaseRegion?: string`
   - `bedrockKnowledgeBaseMaxResults?: number`
 - Created `AssistantData` interface extending `BedrockKnowledgeBaseConfig`
 - Updated `AssistantDefinition.data` to use typed `AssistantData` instead of generic object
+- All KB fields are optional to maintain backward compatibility
 
 ### 2. UI Component (`components/Promptbar/components/AssistantModalComponents/BedrockKnowledgeBaseSection.tsx`)
 Created a new React component with:

@@ -292,10 +292,10 @@ export const AssistantModal: FC<Props> = ({assistant, onCancel, onSave, onUpdate
     const [driveRescanSchedule, setDriveRescanSchedule] = useState<DriveRescanSchedule | null>(null);
 
     const [bedrockKBConfig, setBedrockKBConfig] = useState<BedrockKnowledgeBaseConfig>({
-        useBedrockKnowledgeBase: definition.data?.useBedrockKnowledgeBase || false,
-        bedrockKnowledgeBaseId: definition.data?.bedrockKnowledgeBaseId || '',
-        bedrockKnowledgeBaseRegion: definition.data?.bedrockKnowledgeBaseRegion || '',
-        bedrockKnowledgeBaseMaxResults: definition.data?.bedrockKnowledgeBaseMaxResults || 10,
+        useBedrockKnowledgeBase: definition.data?.useBedrockKnowledgeBase ?? false,
+        bedrockKnowledgeBaseId: definition.data?.bedrockKnowledgeBaseId ?? '',
+        bedrockKnowledgeBaseRegion: definition.data?.bedrockKnowledgeBaseRegion ?? '',
+        bedrockKnowledgeBaseMaxResults: definition.data?.bedrockKnowledgeBaseMaxResults ?? 10,
     });
 
     const [apiOptions, setAPIOptions] = useState<{ [key: string]: boolean }>(initialAPIOptionState);

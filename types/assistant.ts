@@ -12,7 +12,7 @@ export interface AssistantTool {
 }
 
 export interface BedrockKnowledgeBaseConfig {
-    useBedrockKnowledgeBase: boolean;
+    useBedrockKnowledgeBase?: boolean;
     bedrockKnowledgeBaseId?: string;
     bedrockKnowledgeBaseRegion?: string;
     bedrockKnowledgeBaseMaxResults?: number;
